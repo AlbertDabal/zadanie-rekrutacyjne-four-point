@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Select } from "components/atoms/select/Select";
 import satelite from "images/maps/satelite.png";
 import waterline from "images/maps/waterline.png";
+import { MapContainer, Polygon, TileLayer } from "react-leaflet";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -64,9 +65,27 @@ const Navigation = styled.div`
   }
 `;
 
+const Test = styled(MapContainer)`
+  height: 50vh;
+  margin-bottom: 10vh;
+`;
+
 export const Maps = () => {
   const [option, setOption] = useState(["Satelite view", "Waterline"]);
   const [selectItem, setSelectItem] = useState("Satelite view");
+
+  const center = [51.505, -0.09];
+  const purpleOptions = { color: "purple" };
+  const extent =
+    "SRID=4326;POLYGON ((18.59811200969181 52.00954324850903, 18.60683848053626 52.01169065620021, 18.60786068520895 52.00969393549595, 18.59984270901962 52.00730031687287, 18.59811200969181 52.00954324850903))";
+
+  // console.log(extent.geoJSON());
+
+  const polygon = [
+    [51.515, -0.09],
+    [51.52, -0.1],
+    [51.52, -0.12],
+  ];
 
   return (
     <Wrapper>
@@ -88,6 +107,15 @@ export const Maps = () => {
       <Heading>ChlorophYll</Heading>
       <Line />
       <Map src={satelite}></Map>
+      {/* @ts-ignore: Unreachable code error */}
+      <Test center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {/* @ts-ignore: Unreachable code error */}
+        <Polygon pathOptions={purpleOptions} positions={polygon} />
+      </Test>
     </Wrapper>
   );
 };
