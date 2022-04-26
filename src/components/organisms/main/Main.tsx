@@ -6,12 +6,20 @@ import logoBig from "images/rsom_logo_big.svg";
 const Wrapper = styled.div`
   background: url("${baner}");
   width: 100%;
-  height: 80vh;
+  height: 82vh;
   background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  @media (min-width: 500px) and (max-width: 1024px) {
+    height: 80vh;
+  }
+
+  @media (min-width: 1025px) {
+    height: 82vh;
+  }
 `;
 
 const Title = styled.h1`
@@ -46,6 +54,7 @@ const Logo = styled.img`
 
   @media (min-width: 1025px) {
     margin-left: 0px;
+
     width: 325px;
   }
 `;
@@ -65,6 +74,7 @@ const Top = styled.div`
     align-items: center;
     width: 80%;
     max-width: 1280px;
+    margin-top: 10vh;
   }
 `;
 
