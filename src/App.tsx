@@ -18,32 +18,6 @@ const Wrapper = styled.div`
 `;
 
 function App() {
-  useEffect(() => {
-    const SetLogin = async () => {
-      try {
-        const res = await Login();
-
-        // console.log(res.key);
-
-        // const primary = await Primary();
-
-        // console.log(primary);
-
-        const secondary = await Secondary(res.key);
-
-        console.log("secondary", secondary);
-
-        const data = await Data(res.key);
-
-        console.log("data", data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    SetLogin();
-  }, []);
-
   return (
     <Wrapper>
       <Navbar />

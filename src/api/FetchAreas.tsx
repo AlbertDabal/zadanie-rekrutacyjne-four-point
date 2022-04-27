@@ -3,14 +3,9 @@ import axios from "axios";
 import type { CookieJar } from "tough-cookie";
 
 export const Primary = async () => {
-  // @ts-ignore: Unreachable code error
   const res = await axios({
     url: "https://rsom-recruitment.azurewebsites.net/areas/primary",
     method: "get",
-    headers: {
-      Cookie:
-        "csrftoken=zcXMnNGEk8viaVmLBYlp5msfSusBcpDI5b74WKZiAgUGB9OioLbi7PGwjOWBr85w; sessionid=l16gsye1vt7wc5mxss51frdhe1a1l27v",
-    },
   }).catch((error) => {
     console.log(error);
   });
@@ -29,7 +24,7 @@ export const Secondary = async (key: string) => {
     console.log(error);
   });
 
-  return res;
+  return res.data;
 };
 
 export const Data = async (key: string) => {

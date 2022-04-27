@@ -5,6 +5,7 @@ declare module "axios" {
 }
 
 export const Login = async () => {
+  // @ts-ignore: Unreachable code error
   const res = await axios({
     url: "https://rsom-recruitment.azurewebsites.net/users/login/",
     method: "post",
@@ -15,6 +16,8 @@ export const Login = async () => {
   }).catch((error) => {
     console.log(error);
   });
+
+  console.log(res);
 
   return res.data;
 };

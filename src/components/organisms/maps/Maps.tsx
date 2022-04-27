@@ -6,6 +6,8 @@ import { Select } from "components/atoms/select/Select";
 import satelite from "images/maps/satelite.png";
 import waterline from "images/maps/waterline.png";
 import { MapContainer, Polygon, TileLayer } from "react-leaflet";
+import { Login } from "api/FetchUser";
+import { Data, Primary, Secondary } from "api/FetchAreas";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -65,27 +67,77 @@ const Navigation = styled.div`
   }
 `;
 
-const Test = styled(MapContainer)`
-  height: 50vh;
+const MapBox = styled(MapContainer)`
+  width: 100%;
+  height: 70vh;
   margin-bottom: 10vh;
+  margin-top: 2vh;
+
+  @media (min-width: 500px) and (max-width: 1024px) {
+    height: 45vh;
+    margin-bottom: 8vh;
+    margin-top: 2vh;
+  }
+
+  @media (min-width: 1025px) {
+    height: 50vh;
+    margin-bottom: 10vh;
+    margin-top: 0vh;
+  }
+`;
+
+const Loading = styled.div`
+  width: 100%;
+  height: 70vh;
+  margin-bottom: 10vh;
+  margin-top: 2vh;
+
+  @media (min-width: 500px) and (max-width: 1024px) {
+    height: 45vh;
+    margin-bottom: 8vh;
+    margin-top: 2vh;
+  }
+
+  @media (min-width: 1025px) {
+    height: 50vh;
+    margin-bottom: 10vh;
+    margin-top: 0vh;
+  }
 `;
 
 export const Maps = () => {
   const [option, setOption] = useState(["Satelite view", "Waterline"]);
   const [selectItem, setSelectItem] = useState("Satelite view");
+  const [geoLocation, setGeoLocation] = useState(null);
 
-  const center = [51.505, -0.09];
-  const purpleOptions = { color: "purple" };
-  const extent =
-    "SRID=4326;POLYGON ((18.59811200969181 52.00954324850903, 18.60683848053626 52.01169065620021, 18.60786068520895 52.00969393549595, 18.59984270901962 52.00730031687287, 18.59811200969181 52.00954324850903))";
+  useEffect(() => {
+    const SetLogin = async () => {
+      try {
+        const res = await Login();
 
-  // console.log(extent.geoJSON());
+        const primary = await Primary();
 
-  const polygon = [
-    [51.515, -0.09],
-    [51.52, -0.1],
-    [51.52, -0.12],
-  ];
+        console.log(primary);
+
+        const secondary = await Secondary(res.key);
+        let result = secondary.extent.slice(10);
+        // @ts-ignore: Unreachable code error
+        var geojson_pgons = Terraformer.WKT.parse(result);
+
+        setGeoLocation(geojson_pgons);
+
+        console.log("secondary", secondary);
+
+        const data = await Data(res.key);
+
+        console.log("data", data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    SetLogin();
+  }, []);
 
   return (
     <Wrapper>
@@ -108,14 +160,24 @@ export const Maps = () => {
       <Line />
       <Map src={satelite}></Map>
       {/* @ts-ignore: Unreachable code error */}
-      <Test center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {/* @ts-ignore: Unreachable code error */}
-        <Polygon pathOptions={purpleOptions} positions={polygon} />
-      </Test>
+      {geoLocation ? (
+        <MapBox
+          center={[18.59811200969181, 52.00954324850903]}
+          zoom={15}
+          scrollWheelZoom={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {/* @ts-ignore: Unreachable code error */}
+          <Polygon positions={geoLocation.coordinates} />
+        </MapBox>
+      ) : (
+        <Loading>
+          <Heading>ŁADOWANIE MAPY...</Heading>
+        </Loading>
+      )}
     </Wrapper>
   );
 };
