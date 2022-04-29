@@ -8,6 +8,9 @@ import waterline from "images/maps/waterline.png";
 import { MapContainer, Polygon, TileLayer } from "react-leaflet";
 import { Login } from "api/FetchUser";
 import { Data, Primary, Secondary } from "api/FetchAreas";
+import createPlotlyComponent from "react-plotly.js/factory";
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -105,10 +108,30 @@ const Loading = styled.div`
   }
 `;
 
+const StyledPlot = styled(Plot)`
+  width: 100%;
+  height: 70vh;
+  margin-bottom: 10vh;
+  margin-top: 2vh;
+
+  @media (min-width: 500px) and (max-width: 1024px) {
+    height: 45vh;
+    margin-bottom: 8vh;
+    margin-top: 2vh;
+  }
+
+  @media (min-width: 1025px) {
+    height: 50vh;
+    margin-bottom: 10vh;
+    margin-top: 0vh;
+  }
+`;
+
 export const Maps = () => {
   const [option, setOption] = useState(["Satelite view", "Waterline"]);
   const [selectItem, setSelectItem] = useState("Satelite view");
   const [geoLocation, setGeoLocation] = useState(null);
+  const [matrix, setMatrix] = useState(null);
 
   useEffect(() => {
     const SetLogin = async () => {
@@ -126,11 +149,9 @@ export const Maps = () => {
 
         setGeoLocation(geojson_pgons);
 
-        console.log("secondary", secondary);
-
         const data = await Data(res.key);
 
-        console.log("data", data);
+        setMatrix(data.data);
       } catch (err) {
         console.log(err);
       }
@@ -176,6 +197,24 @@ export const Maps = () => {
       ) : (
         <Loading>
           <Heading>ŁADOWANIE MAPY...</Heading>
+        </Loading>
+      )}
+      {matrix ? (
+        //  @ts-ignore: Unreachable code error
+        <StyledPlot
+          data={[
+            {
+              z: matrix,
+              type: "heatmap",
+            },
+          ]}
+          layout={{ title: "Heatmap" }}
+          useResizeHandler={true}
+          style={{ width: "100%", height: "100%" }}
+        />
+      ) : (
+        <Loading>
+          <Heading>ŁADOWANIE HEATMAPY...</Heading>
         </Loading>
       )}
     </Wrapper>

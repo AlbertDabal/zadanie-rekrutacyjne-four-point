@@ -1,7 +1,5 @@
 import axios from "axios";
 
-import type { CookieJar } from "tough-cookie";
-
 export const Primary = async () => {
   const res = await axios({
     url: "https://rsom-recruitment.azurewebsites.net/areas/primary",
@@ -38,5 +36,5 @@ export const Data = async (key: string) => {
     console.log(error);
   });
 
-  return res;
+  return res.data;
 };
